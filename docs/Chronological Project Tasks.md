@@ -20,21 +20,21 @@
 
 Original proposal window: Week 1, now to May 10.
 
-- [ ] Set up the shared GitHub repository.
-- [ ] Add a clear repository structure:
+- [X] Set up the shared GitHub repository.
+- [X] Add a clear repository structure:
   - `data/` for raw, interim, and processed dataset files.
   - `notebooks/` for exploration and demo notebooks.
   - `src/` for reusable scripts.
   - `prompts/` for teacher, judge, and zero-shot prompts.
   - `results/` for metrics, tables, plots, and error-analysis samples.
   - `models/` or external storage notes for LoRA adapters and checkpoints.
-- [ ] Set up Colab Pro, Colab free, and Kaggle Notebook environments.
-- [ ] Verify access to required services:
+- [X] Set up Colab Pro, Colab free, and Kaggle Notebook environments.
+- [X] Verify access to required services:
   - Kaggle dataset download.
   - Hugging Face model access for Llama 3.1 8B Instruct.
   - Teacher LLM API access.
   - Judge LLM API access.
-- [ ] Download the "Resume and Job Description" Kaggle dataset.
+- [X] Download the "Resume and Job Description" Kaggle dataset.
 - [ ] Inspect dataset columns and confirm the available fields:
   - Resume text.
   - Job description text.
