@@ -1,0 +1,15 @@
+# Kaggle credentials / secrets
+kaggle.json
+.env
+
+# Dataset files
+data/raw/*
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+
+# Model artifacts / checkpoints
+models/*
+!models/.gitkeep
