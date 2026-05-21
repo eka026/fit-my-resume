@@ -35,25 +35,25 @@ Original proposal window: Week 1, now to May 10.
   - Teacher LLM API access.
   - Judge LLM API access.
 - [X] Download the "Resume and Job Description" Kaggle dataset.
-- [ ] Inspect dataset columns and confirm the available fields:
+- [X] Inspect dataset columns and confirm the available fields:
   - Resume text.
   - Job description text.
   - Match labels or category labels.
   - Any IDs or metadata needed for joins.
-- [ ] Build the initial preprocessing script.
-- [ ] Remove or mask obvious personally identifiable information:
+- [X] Build the initial preprocessing script.
+- [X] Remove or mask obvious personally identifiable information:
   - Names.
   - Emails.
   - Phone numbers.
   - Addresses.
   - URLs if they identify a person.
-- [ ] Clean noisy text:
+- [X] Clean noisy text:
   - Remove broken characters.
   - Normalize whitespace.
   - Normalize date formatting where practical.
   - Drop empty, duplicate, or unusable rows.
-- [ ] Create train, validation, and test splits using an 80/10/10 split.
-- [ ] Save split files with stable IDs so later generated outputs can be traced back.
+- [X] Create train, validation, and test splits using an 80/10/10 split.
+- [X] Save split files with stable IDs so later generated outputs can be traced back.
 - [ ] Draft the teacher prompt for generating gold outputs.
 - [ ] Run the teacher prompt on a very small sample before generating the full dataset.
 

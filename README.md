@@ -70,6 +70,35 @@ ID, Resume_str, Resume_html, Category
 training_data.csv:
 company_name, job_description, position_title, description_length, model_response
 ```
+
+## Preprocess Dataset
+
+After the raw Kaggle files are available, run the deterministic preprocessing script:
+
+```powershell
+python src/preprocess_data.py --raw-dir data/raw/kaggle --interim-dir data/interim --processed-dir data/processed --seed 42
+```
+
+This creates cleaned interim files:
+
+```text
+data/interim/resumes_clean.csv
+data/interim/jobs_clean.csv
+```
+
+And reproducible 80/10/10 split files:
+
+```text
+data/processed/resumes_train.csv
+data/processed/resumes_validation.csv
+data/processed/resumes_test.csv
+data/processed/jobs_train.csv
+data/processed/jobs_validation.csv
+data/processed/jobs_test.csv
+data/processed/preprocessing_metadata.json
+```
+
+The generated CSV files are not tracked by Git. Teammates should get the same outputs when they use the same raw Kaggle files and the same seed.
 ## Project Plan
 
 See `docs/Chronological Project Tasks.md` for the chronological task list and project milestones.
