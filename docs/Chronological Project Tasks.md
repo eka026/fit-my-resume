@@ -4,7 +4,7 @@
 
 **Core deliverables by the end of the project:**
 - Fine-tuned Llama 3.1 8B model using QLoRA/LoRA adapters, or a documented smaller-model fallback if compute prevents 8B training.
-- Inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `rewritten_resume`.
+- vLLM-backed inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `rewritten_resume`.
 - Baseline comparison against BM25, sentence-transformer similarity, and zero-shot Llama 3.1 8B.
 - Automatic evaluation results plus a small manual evaluation component for rewritten resumes.
 - Error analysis, final report, cleaned repository, and short demo notebook or Gradio interface.
@@ -13,6 +13,7 @@
 - Add a small manual evaluation of rewritten resumes, not only LLM-as-judge.
 - Spot-check teacher-generated outputs thoroughly before using them for fine-tuning.
 - Prepare compute fallbacks and optimize training so Colab/Kaggle limits do not block the project.
+- Use vLLM for model serving and batch inference after training or for zero-shot inference; do not use vLLM for QLoRA training itself.
 
 ---
 
@@ -54,7 +55,7 @@ Original proposal window: Week 1, now to May 10.
   - Drop empty, duplicate, or unusable rows.
 - [X] Create train, validation, and test splits using an 80/10/10 split.
 - [X] Save split files with stable IDs so later generated outputs can be traced back.
-- [ ] Draft the teacher prompt for generating gold outputs.
+- [X] Draft the teacher prompt for generating gold outputs.
 - [ ] Run the teacher prompt on a very small sample before generating the full dataset.
 
 **Definition of done:** The cleaned dataset is split and saved, the environments run, and the teacher prompt is ready for quality testing.
@@ -108,6 +109,7 @@ Complete before judging whether fine-tuning helped.
 - [ ] Run sentence-transformer baseline on the validation and test sets.
 - [ ] Save sentence-transformer scores and metrics.
 - [ ] Implement zero-shot Llama 3.1 8B prompting using the same JSON schema.
+- [ ] Serve the zero-shot Llama model with vLLM if the available GPU/runtime supports it.
 - [ ] Run zero-shot Llama on a small sample first to verify formatting.
 - [ ] Run zero-shot Llama on the test set if compute permits.
 - [ ] Track JSON parse rate for zero-shot outputs.
@@ -164,14 +166,19 @@ Run this after the training smoke test passes.
   - Runtime and interruption risk.
 - [ ] Stop early if validation loss worsens or outputs degrade.
 - [ ] Save the final LoRA adapter and configuration.
-- [ ] Write or finalize the inference script.
+- [ ] Decide the vLLM serving strategy for the trained model:
+  - Merge the LoRA adapter into the base model and serve the merged model with vLLM, or
+  - Serve the base model with LoRA adapter support if the selected vLLM version and runtime support it.
+- [ ] Write or finalize the vLLM-based inference script.
+- [ ] Start a local vLLM server for the selected model or fallback model.
+- [ ] Call the vLLM OpenAI-compatible API from the inference script.
 - [ ] Run the fine-tuned model on validation examples.
 - [ ] Check JSON parse rate.
 - [ ] Check sample explanations and rewritten resumes for hallucinations.
 - [ ] Run the fine-tuned model on the full test set.
-- [ ] Save all generated test outputs with model version and prompt version.
+- [ ] Save all generated test outputs with model version, adapter version, prompt version, and vLLM serving configuration.
 
-**Definition of done:** The fine-tuned model has produced test-set outputs that can be evaluated against all baselines.
+**Definition of done:** The fine-tuned model has produced test-set outputs through the vLLM inference path and those outputs can be evaluated against all baselines.
 
 ---
 
@@ -296,6 +303,8 @@ Build after the final model or fallback model is selected.
 - [ ] Decide demo format:
   - Gradio interface, or
   - Notebook demo if deployment time is limited.
+- [ ] Run the selected final model behind a local vLLM server for the demo when GPU resources allow.
+- [ ] If vLLM is not feasible in the demo environment, document the fallback inference path clearly.
 - [ ] Implement input fields:
   - Resume text.
   - Job description text.
@@ -309,7 +318,7 @@ Build after the final model or fallback model is selected.
 - [ ] Prepare one polished demo example for the presentation.
 - [ ] Save screenshots or short notes for the final report/presentation.
 
-**Definition of done:** A stakeholder can run the demo and see the complete resume-job matching workflow.
+**Definition of done:** A stakeholder can run the demo and see the complete resume-job matching workflow, preferably through vLLM-backed inference or with a documented fallback if vLLM is unavailable.
 
 ---
 
@@ -345,6 +354,7 @@ Complete this after experiments are frozen.
   - Installation/setup instructions.
   - Data preparation instructions.
   - Training command.
+  - vLLM serving command.
   - Evaluation command.
   - Demo command.
 - [ ] Remove secrets, API keys, and private files from the repository.
@@ -366,10 +376,11 @@ If time becomes tight, complete these in order:
 4. Zero-shot Llama baseline on a manageable sample or full test set.
 5. QLoRA smoke test.
 6. Full fine-tuning or smaller-model fallback.
-7. Automatic evaluation.
-8. Small manual rewrite evaluation.
-9. Error analysis.
-10. Final report and demo.
+7. vLLM-backed inference for the selected model, or documented fallback inference if vLLM is not feasible.
+8. Automatic evaluation.
+9. Small manual rewrite evaluation.
+10. Error analysis.
+11. Final report and demo.
 
 ## Minimum Viable Submission
 
@@ -380,6 +391,7 @@ If compute or API limits become severe, the minimum defensible version is:
 - BM25 and sentence-transformer baseline results.
 - Zero-shot Llama results.
 - One completed QLoRA run, even if on a smaller subset or smaller model.
+- vLLM inference for the selected model if compute allows, or a documented fallback inference method.
 - Automatic evaluation and small manual evaluation.
 - Honest error analysis explaining limitations and compute constraints.
 - Simple demo notebook using the best available model output.
