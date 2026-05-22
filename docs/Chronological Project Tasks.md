@@ -56,7 +56,7 @@ Original proposal window: Week 1, now to May 10.
 - [X] Create train, validation, and test splits using an 80/10/10 split.
 - [X] Save split files with stable IDs so later generated outputs can be traced back.
 - [X] Draft the teacher prompt for generating gold outputs.
-- [ ] Run the teacher prompt on a very small sample before generating the full dataset.
+- [X] Run the teacher prompt on a very small sample before generating the full dataset.
 
 **Definition of done:** The cleaned dataset is split and saved, the environments run, and the teacher prompt is ready for quality testing.
 
