@@ -99,6 +99,42 @@ data/processed/preprocessing_metadata.json
 ```
 
 The generated CSV files are not tracked by Git. Teammates should get the same outputs when they use the same raw Kaggle files and the same seed.
+
+## Run Gemini Teacher Pilot
+
+Before generating teacher outputs for the full dataset, run the prompt on a very small sample and inspect the result.
+
+Create a Gemini API key in Google AI Studio, then add it to your local `.env` file:
+
+```text
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Install dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+First run a dry run to confirm the prompt and data load correctly without calling Gemini:
+
+```powershell
+python src/run_teacher_pilot_gemini.py --limit 1 --dry-run
+```
+
+Then run the real Gemini teacher pilot:
+
+```powershell
+python src/run_teacher_pilot_gemini.py --limit 1
+```
+
+Pilot outputs are written to:
+
+```text
+results/teacher_pilot/
+```
+
+Inspect the JSON output before increasing `--limit` or generating the full teacher-labeled dataset.
 ## Project Plan
 
 See `docs/Chronological Project Tasks.md` for the chronological task list and project milestones.
