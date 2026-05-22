@@ -96,21 +96,37 @@ def load_env_file(path: Path) -> None:
         os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
-def load_pairs(processed_dir: Path, resume_split: str, job_split: str, limit: int) -> list[dict[str, Any]]:
-    resumes = pd.read_csv(processed_dir / f"resumes_{resume_split}.csv")
-    jobs = pd.read_csv(processed_dir / f"jobs_{job_split}.csv")
+PAIR_COLUMNS = [
+    "pair_id",
+    "resume_id",
+    "job_id",
+    "pairing_strategy",
+    "similarity_score",
+    "resume_text",
+    "job_description",
+]
 
-    count = min(limit, len(resumes), len(jobs))
+
+def load_pairs(processed_dir: Path, split: str, limit: int) -> list[dict[str, Any]]:
+    path = processed_dir / f"teacher_pairs_{split}.csv"
+    pair_rows = pd.read_csv(path)
+    missing = [column for column in PAIR_COLUMNS if column not in pair_rows.columns]
+    if missing:
+        raise ValueError(f"{path} is missing required columns: {', '.join(missing)}")
+
+    count = min(limit, len(pair_rows))
     pairs = []
     for index in range(count):
-        resume = resumes.iloc[index]
-        job = jobs.iloc[index]
+        pair = pair_rows.iloc[index]
         pairs.append(
             {
-                "resume_id": str(resume["resume_id"]),
-                "job_id": str(job["job_id"]),
-                "resume_text": str(resume["resume_text"]),
-                "job_description": str(job["job_description"]),
+                "pair_id": str(pair["pair_id"]),
+                "resume_id": str(pair["resume_id"]),
+                "job_id": str(pair["job_id"]),
+                "pairing_strategy": str(pair["pairing_strategy"]),
+                "similarity_score": float(pair["similarity_score"]),
+                "resume_text": str(pair["resume_text"]),
+                "job_description": str(pair["job_description"]),
             }
         )
     return pairs
@@ -154,8 +170,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--processed-dir", type=Path, default=Path("data/processed"))
     parser.add_argument("--prompt-path", type=Path, default=Path("prompts/teacher_gold_output_prompt_v1.md"))
     parser.add_argument("--output-dir", type=Path, default=Path("results/teacher_pilot"))
-    parser.add_argument("--resume-split", default="train")
-    parser.add_argument("--job-split", default="train")
+    parser.add_argument("--split", default="train")
     parser.add_argument("--limit", type=int, default=1)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
@@ -170,14 +185,17 @@ def main(argv: list[str] | None = None) -> int:
 
     load_env_file(args.env_file)
     template = args.prompt_path.read_text(encoding="utf-8")
-    pairs = load_pairs(args.processed_dir, args.resume_split, args.job_split, args.limit)
+    pairs = load_pairs(args.processed_dir, args.split, args.limit)
 
     rows = []
     for pair in pairs:
         prompt = render_prompt(template, pair["resume_text"], pair["job_description"])
         row = {
+            "pair_id": pair["pair_id"],
             "resume_id": pair["resume_id"],
             "job_id": pair["job_id"],
+            "pairing_strategy": pair["pairing_strategy"],
+            "similarity_score": pair["similarity_score"],
             "prompt_version": PROMPT_VERSION,
             "model": args.model,
             "created_at": datetime.now(timezone.utc).isoformat(),
@@ -197,6 +215,7 @@ def main(argv: list[str] | None = None) -> int:
     write_jsonl(output_path, rows)
 
     print(f"pairs: {len(rows)}")
+    print(f"split: {args.split}")
     print(f"model: {args.model}")
     print(f"dry_run: {args.dry_run}")
     print(f"wrote: {output_path}")

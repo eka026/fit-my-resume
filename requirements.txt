@@ -2,4 +2,4 @@ kaggle
 pandas
 pytest
 google-genai
-google-genai
+scikit-learn

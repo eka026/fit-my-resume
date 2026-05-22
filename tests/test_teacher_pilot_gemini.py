@@ -1,6 +1,7 @@
 import pytest
+import pandas as pd
 
-from src.run_teacher_pilot_gemini import render_prompt, validate_teacher_output
+from src.run_teacher_pilot_gemini import load_pairs, render_prompt, validate_teacher_output
 
 
 def test_render_prompt_fills_resume_and_job_placeholders():
@@ -45,3 +46,50 @@ def test_validate_teacher_output_rejects_score_outside_range():
 
     with pytest.raises(ValueError, match="score"):
         validate_teacher_output(output)
+
+
+def test_load_pairs_reads_teacher_pair_file(tmp_path):
+    processed_dir = tmp_path / "processed"
+    processed_dir.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "pair_id": "train_resume_1_job_2_strong_hybrid",
+                "split": "train",
+                "resume_id": "resume_1",
+                "job_id": "job_2",
+                "pairing_strategy": "strong_hybrid",
+                "similarity_score": 0.75,
+                "resume_category": "Data Science",
+                "job_position_title": "ML Engineer",
+                "resume_text": "Python and machine learning resume.",
+                "job_description": "Machine learning job description.",
+            },
+            {
+                "pair_id": "train_resume_3_job_4_weak_random",
+                "split": "train",
+                "resume_id": "resume_3",
+                "job_id": "job_4",
+                "pairing_strategy": "weak_random",
+                "similarity_score": 0.02,
+                "resume_category": "HR",
+                "job_position_title": "Warehouse Associate",
+                "resume_text": "Recruiting and onboarding resume.",
+                "job_description": "Warehouse inventory job description.",
+            },
+        ]
+    ).to_csv(processed_dir / "teacher_pairs_train.csv", index=False)
+
+    pairs = load_pairs(processed_dir=processed_dir, split="train", limit=1)
+
+    assert pairs == [
+        {
+            "pair_id": "train_resume_1_job_2_strong_hybrid",
+            "resume_id": "resume_1",
+            "job_id": "job_2",
+            "pairing_strategy": "strong_hybrid",
+            "similarity_score": 0.75,
+            "resume_text": "Python and machine learning resume.",
+            "job_description": "Machine learning job description.",
+        }
+    ]

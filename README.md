@@ -100,6 +100,29 @@ data/processed/preprocessing_metadata.json
 
 The generated CSV files are not tracked by Git. Teammates should get the same outputs when they use the same raw Kaggle files and the same seed.
 
+## Create Teacher Pairs
+
+After preprocessing, create balanced resume-job pairs for teacher output generation:
+
+```powershell
+python src/create_teacher_pairs.py --split train --split validation --pairs-per-resume 3 --seed 42
+```
+
+For a small pilot:
+
+```powershell
+python src/create_teacher_pairs.py --split train --max-resumes 10 --seed 42
+```
+
+This writes:
+
+```text
+data/processed/teacher_pairs_train.csv
+data/processed/teacher_pairs_validation.csv
+```
+
+Existing resume/job split CSVs are read only and are not modified.
+
 ## Run Gemini Teacher Pilot
 
 Before generating teacher outputs for the full dataset, run the prompt on a very small sample and inspect the result.
@@ -119,13 +142,13 @@ python -m pip install -r requirements.txt
 First run a dry run to confirm the prompt and data load correctly without calling Gemini:
 
 ```powershell
-python src/run_teacher_pilot_gemini.py --limit 1 --dry-run
+python src/run_teacher_pilot_gemini.py --split train --limit 1 --dry-run
 ```
 
 Then run the real Gemini teacher pilot:
 
 ```powershell
-python src/run_teacher_pilot_gemini.py --limit 1
+python src/run_teacher_pilot_gemini.py --split train --limit 1
 ```
 
 Pilot outputs are written to:
