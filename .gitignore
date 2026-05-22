@@ -12,3 +12,8 @@ data/processed/*
 # Model artifacts / checkpoints
 models/*
 !models/.gitkeep
+
+# Virtual environments
+.venv/
+venv/
+env/
