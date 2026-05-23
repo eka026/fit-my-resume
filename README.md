@@ -123,14 +123,14 @@ data/processed/teacher_pairs_validation.csv
 
 Existing resume/job split CSVs are read only and are not modified.
 
-## Run Gemini Teacher Pilot
+## Run DeepSeek Teacher Pilot
 
-Before generating teacher outputs for the full dataset, run the prompt on a very small sample and inspect the result.
+Before generating teacher outputs for the full dataset, run `prompts/teacher_gold_output_prompt_v3.md` on a very small sample and inspect the result.
 
-Create a Gemini API key in Google AI Studio, then add it to your local `.env` file:
+Create a DeepSeek API key, then add it to your local `.env` file:
 
 ```text
-GEMINI_API_KEY=your_gemini_api_key_here
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
 ```
 
 Install dependencies:
@@ -139,16 +139,16 @@ Install dependencies:
 python -m pip install -r requirements.txt
 ```
 
-First run a dry run to confirm the prompt and data load correctly without calling Gemini:
+First run a dry run to confirm the prompt and data load correctly without calling DeepSeek:
 
 ```powershell
-python src/run_teacher_pilot_gemini.py --split train --limit 1 --dry-run
+python src/run_teacher_pilot.py --split train --limit 1 --dry-run
 ```
 
-Then run the real Gemini teacher pilot:
+Then run the real DeepSeek teacher pilot:
 
 ```powershell
-python src/run_teacher_pilot_gemini.py --split train --limit 1
+python src/run_teacher_pilot.py --split train --limit 1
 ```
 
 Pilot outputs are written to:

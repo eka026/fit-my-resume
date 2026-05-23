@@ -1,5 +1,4 @@
 kaggle
 pandas
 pytest
-google-genai
 scikit-learn

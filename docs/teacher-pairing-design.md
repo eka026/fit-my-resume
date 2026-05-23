@@ -4,9 +4,9 @@ Date: 2026-05-22
 
 ## Purpose
 
-`src/create_teacher_pairs.py` will create traceable resume-job pairs for Gemini teacher labeling. The raw Kaggle files do not share a join key, so teacher examples should not be created by pairing resume and job rows by index.
+`src/create_teacher_pairs.py` will create traceable resume-job pairs for DeepSeek teacher labeling. The raw Kaggle files do not share a join key, so teacher examples should not be created by pairing resume and job rows by index.
 
-The paired dataset should contain a balanced range of likely fit quality so the teacher model can produce useful `score`, `explanation`, and `rewritten_resume` outputs for later instruction tuning.
+The paired dataset should contain a balanced range of likely fit quality so the teacher model can produce useful `score`, `explanation`, and `resume_suggestions` outputs for later instruction tuning.
 
 ## Inputs
 
@@ -40,7 +40,7 @@ For each resume:
 
 Seeded randomness should choose among candidate bands instead of always taking the single top, middle, or bottom job. This keeps examples less mechanical and reduces overfitting risk.
 
-The pairing strategy is not a ground-truth label. Gemini will still assign the final fit score.
+The pairing strategy is not a ground-truth label. DeepSeek will still assign the final fit score.
 
 ## Outputs
 

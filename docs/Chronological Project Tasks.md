@@ -4,7 +4,7 @@
 
 **Core deliverables by the end of the project:**
 - Fine-tuned Llama 3.1 8B model using QLoRA/LoRA adapters, or a documented smaller-model fallback if compute prevents 8B training.
-- vLLM-backed inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `rewritten_resume`.
+- vLLM-backed inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `resume_suggestions`.
 - Baseline comparison against BM25, sentence-transformer similarity, and zero-shot Llama 3.1 8B.
 - Automatic evaluation results plus a small manual evaluation component for rewritten resumes.
 - Error analysis, final report, cleaned repository, and short demo notebook or Gradio interface.
@@ -67,11 +67,17 @@ Original proposal window: Week 1, now to May 10.
 Original proposal window: Week 2, May 11 to May 17.
 
 - [ ] Generate teacher outputs for a small pilot batch first.
+  - [X] Created and ran a dry-run pilot artifact: `results/teacher_pilot/deepseek_teacher_pilot_dry_run.jsonl`.
+  - [ ] Run the real DeepSeek pilot after `DEEPSEEK_API_KEY` is available.
 - [ ] Validate that each teacher output contains valid JSON.
+  - [X] Added pilot-output JSON parsing in `src/run_teacher_pilot.py`.
+  - [X] Verified the pilot validation tests pass with pytest plugin autoload disabled.
 - [ ] Check that each output includes all required fields:
   - `score`.
   - `explanation`.
-  - `rewritten_resume`.
+  - `resume_suggestions`.
+  - [X] Added schema validation for required top-level fields in `src/run_teacher_pilot.py`.
+  - [X] Added tests covering valid schema acceptance and invalid score rejection.
 - [ ] Manually spot-check the pilot outputs for quality.
 - [ ] Reject or revise outputs that:
   - Invent experience not present in the original resume.

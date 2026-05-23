@@ -44,6 +44,16 @@ def compute_similarity(resume_text: str, job_descriptions: pd.Series) -> list[fl
     return [float(score) for score in scores]
 
 
+def compute_similarity_matrix(resumes: pd.Series, jobs: pd.Series):
+    resume_texts = resumes.fillna("").astype(str).tolist()
+    job_texts = jobs.fillna("").astype(str).tolist()
+    documents = resume_texts + job_texts
+    matrix = TfidfVectorizer(stop_words="english").fit_transform(documents)
+    resume_matrix = matrix[: len(resume_texts)]
+    job_matrix = matrix[len(resume_texts) :]
+    return cosine_similarity(resume_matrix, job_matrix)
+
+
 def category_keywords(category: str) -> list[str]:
     normalized = normalize_text(category)
     keywords = [normalized] if normalized else []
@@ -63,6 +73,16 @@ def related_job_indices(category: str, jobs: pd.DataFrame) -> set[int]:
     return related
 
 
+def related_job_indices_by_category(
+    categories: pd.Series,
+    jobs: pd.DataFrame,
+) -> dict[str, set[int]]:
+    return {
+        str(category): related_job_indices(str(category), jobs)
+        for category in categories.fillna("").drop_duplicates()
+    }
+
+
 def choose_index(candidates: list[int], rng: random.Random, used: set[int]) -> int | None:
     available = [candidate for candidate in candidates if candidate not in used]
     if not available:
@@ -79,12 +99,18 @@ def create_pairs_for_split(
 ) -> pd.DataFrame:
     rows = []
     rng = random.Random(seed)
+    resumes = resumes.reset_index(drop=True).copy()
     jobs = jobs.reset_index(drop=True).copy()
+    similarity_scores = compute_similarity_matrix(
+        resumes["resume_text"],
+        jobs["job_description"],
+    )
+    related_by_category = related_job_indices_by_category(resumes["category"], jobs)
 
-    for _, resume in resumes.reset_index(drop=True).iterrows():
-        scores = compute_similarity(str(resume["resume_text"]), jobs["job_description"])
+    for resume_index, resume in resumes.iterrows():
+        scores = similarity_scores[resume_index]
         ranked = sorted(range(len(scores)), key=lambda index: scores[index], reverse=True)
-        related = related_job_indices(str(resume.get("category", "")), jobs)
+        related = related_by_category.get(str(resume.get("category", "")), set())
         used: set[int] = set()
 
         top_count = max(1, min(10, len(ranked)))
@@ -114,7 +140,7 @@ def create_pairs_for_split(
                     "resume_id": resume["resume_id"],
                     "job_id": job["job_id"],
                     "pairing_strategy": strategy,
-                    "similarity_score": round(scores[job_index], 6),
+                    "similarity_score": round(float(scores[job_index]), 6),
                     "resume_category": resume.get("category", ""),
                     "job_position_title": job.get("position_title", ""),
                     "resume_text": resume["resume_text"],

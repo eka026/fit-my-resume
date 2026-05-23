@@ -1,6 +1,12 @@
 import pandas as pd
 
-from src.create_teacher_pairs import REQUIRED_COLUMNS, create_pairs_for_split, parse_splits
+from src.create_teacher_pairs import (
+    REQUIRED_COLUMNS,
+    compute_similarity_matrix,
+    create_pairs_for_split,
+    parse_splits,
+    related_job_indices_by_category,
+)
 
 
 def _resumes():
@@ -94,6 +100,27 @@ def test_create_pairs_is_deterministic_for_same_seed():
     )
 
     pd.testing.assert_frame_equal(first, second)
+
+
+def test_compute_similarity_matrix_scores_all_resumes_against_all_jobs():
+    scores = compute_similarity_matrix(
+        resumes=_resumes()["resume_text"],
+        jobs=_jobs()["job_description"],
+    )
+
+    assert scores.shape == (2, 4)
+    assert scores[0].argmax() == 0
+    assert scores[1].argmax() == 1
+
+
+def test_related_job_indices_by_category_maps_each_category_once():
+    related = related_job_indices_by_category(
+        categories=_resumes()["category"],
+        jobs=_jobs(),
+    )
+
+    assert related["Data Science"] == {0}
+    assert related["HR"] == {1}
 
 
 def test_parse_splits_uses_defaults_only_when_no_split_is_provided():
