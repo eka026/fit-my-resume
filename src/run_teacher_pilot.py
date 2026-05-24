@@ -300,9 +300,11 @@ def main(argv: list[str] | None = None) -> int:
 
     suffix = "dry_run" if args.dry_run else "outputs"
     output_path = args.output_dir / f"deepseek_teacher_pilot_{suffix}.jsonl"
+    failure_path = args.output_dir / "deepseek_teacher_pilot_failures.jsonl"
     completed_pair_ids = load_completed_pair_ids(output_path)
     written_count = 0
     skipped_count = 0
+    failed_count = 0
 
     for pair in pairs:
         if pair["pair_id"] in completed_pair_ids:
@@ -324,8 +326,26 @@ def main(argv: list[str] | None = None) -> int:
         if args.dry_run:
             row["rendered_prompt_chars"] = len(prompt)
         else:
-            teacher_output = generate_teacher_output(prompt, args.model)
-            row["teacher_output"] = teacher_output
+            try:
+                teacher_output = generate_teacher_output(prompt, args.model)
+                row["teacher_output"] = teacher_output
+            except Exception as error:
+                failure_row = {
+                    "pair_id": pair["pair_id"],
+                    "resume_id": pair["resume_id"],
+                    "job_id": pair["job_id"],
+                    "pairing_strategy": pair["pairing_strategy"],
+                    "similarity_score": pair["similarity_score"],
+                    "prompt_version": PROMPT_VERSION,
+                    "model": args.model,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "error_type": type(error).__name__,
+                    "error": str(error),
+                }
+                append_jsonl_row(failure_path, failure_row)
+                failed_count += 1
+                print(f"failed_pair: {pair['pair_id']} ({type(error).__name__}: {error})")
+                continue
 
         append_jsonl_row(output_path, row)
         completed_pair_ids.add(pair["pair_id"])
@@ -334,10 +354,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"requested_pairs: {len(pairs)}")
     print(f"skipped_existing: {skipped_count}")
     print(f"written: {written_count}")
+    print(f"failed: {failed_count}")
     print(f"split: {args.split}")
     print(f"model: {args.model}")
     print(f"dry_run: {args.dry_run}")
     print(f"wrote: {output_path}")
+    if failed_count:
+        print(f"failures: {failure_path}")
     return 0
 
 

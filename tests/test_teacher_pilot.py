@@ -213,6 +213,81 @@ def test_main_skips_completed_pairs_and_appends_new_rows(tmp_path, monkeypatch):
     assert "Design resume." in calls[0][0]
 
 
+def test_main_records_failed_pair_and_continues(tmp_path, monkeypatch):
+    processed_dir = tmp_path / "processed"
+    processed_dir.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "pair_id": "pair_1",
+                "resume_id": "resume_1",
+                "job_id": "job_1",
+                "pairing_strategy": "strong_hybrid",
+                "similarity_score": 0.9,
+                "resume_text": "First resume.",
+                "job_description": "First job.",
+            },
+            {
+                "pair_id": "pair_2",
+                "resume_id": "resume_2",
+                "job_id": "job_2",
+                "pairing_strategy": "weak_random",
+                "similarity_score": 0.1,
+                "resume_text": "Second resume.",
+                "job_description": "Second job.",
+            },
+        ]
+    ).to_csv(processed_dir / "teacher_pairs_train.csv", index=False)
+    prompt_path = tmp_path / "prompt.md"
+    prompt_path.write_text("RESUME {{resume_text}} JOB {{job_description}}", encoding="utf-8")
+    output_dir = tmp_path / "outputs"
+
+    def fake_generate_teacher_output(prompt, model):
+        if "First resume." in prompt:
+            raise RuntimeError("API failed")
+        return {
+            "score": 20,
+            "explanation": {
+                "matched_qualifications": [],
+                "missing_or_weak_qualifications": [],
+                "overall_reasoning": "Weak fit.",
+            },
+            "resume_suggestions": [],
+        }
+
+    monkeypatch.setattr("src.run_teacher_pilot.generate_teacher_output", fake_generate_teacher_output)
+
+    from src.run_teacher_pilot import main
+
+    main(
+        [
+            "--processed-dir",
+            str(processed_dir),
+            "--prompt-path",
+            str(prompt_path),
+            "--output-dir",
+            str(output_dir),
+            "--split",
+            "train",
+            "--limit",
+            "2",
+        ]
+    )
+
+    output_rows = [
+        json.loads(line)
+        for line in (output_dir / "deepseek_teacher_pilot_outputs.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    failed_rows = [
+        json.loads(line)
+        for line in (output_dir / "deepseek_teacher_pilot_failures.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+
+    assert [row["pair_id"] for row in output_rows] == ["pair_2"]
+    assert failed_rows[0]["pair_id"] == "pair_1"
+    assert failed_rows[0]["error"] == "API failed"
+
+
 def test_default_prompt_uses_v2():
     args = parse_args([])
 
