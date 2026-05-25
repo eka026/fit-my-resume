@@ -158,6 +158,45 @@ results/teacher_pilot/
 ```
 
 Inspect the JSON output before increasing `--limit` or generating the full teacher-labeled dataset.
+
+## Build Instruction-Tuning Corpus
+
+After teacher outputs are generated, build the fine-tuning JSONL by joining the
+teacher outputs back to the source resume-job pairs:
+
+```powershell
+python src/build_instruction_corpus.py `
+  --pairs-path data/processed/teacher_pairs_train.csv `
+  --teacher-outputs-path results/teacher_pilot/deepseek_teacher_pilot_outputs.jsonl `
+  --output-path data/instruction_tuning/instruction_tuning_train.jsonl `
+  --skip-invalid
+```
+
+After validation teacher outputs are generated, build the validation corpus the
+same way:
+
+```powershell
+python src/build_instruction_corpus.py `
+  --pairs-path data/processed/teacher_pairs_validation.csv `
+  --teacher-outputs-path results/teacher_validation/deepseek_teacher_pilot_outputs.jsonl `
+  --output-path data/instruction_tuning/instruction_tuning_validation.jsonl `
+  --skip-invalid
+```
+
+Use `--skip-invalid` only after reviewing the skipped count. Without that flag,
+the script fails on the first malformed teacher output.
+
+Each output row contains:
+
+```text
+instruction
+input
+output
+metadata
+```
+
+The generated instruction-tuning files are derived artifacts and are not tracked
+by Git.
 ## Project Plan
 
 See `docs/Chronological Project Tasks.md` for the chronological task list and project milestones.
