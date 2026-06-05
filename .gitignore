@@ -12,6 +12,9 @@ data/processed/*
 # Model artifacts / checkpoints
 models/*
 !models/.gitkeep
+!models/qwen25-7b-fitmyresume-lora-v2/
+!models/qwen25-7b-fitmyresume-lora-v2/final/
+!models/qwen25-7b-fitmyresume-lora-v2/final/*
 
 # Virtual environments
 .venv/
