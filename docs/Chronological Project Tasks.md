@@ -178,14 +178,14 @@ Run this after the training smoke test passes.
   - Load the base model plus LoRA adapter directly with Transformers/PEFT if Colab makes vLLM unreliable.
 - [X] Write or finalize the vLLM-based inference script.
 - [X] Write the Transformers/PEFT fallback inference script.
-- [ ] Run a Transformers/PEFT smoke test against the saved LoRA adapter in Colab.
-- [ ] Start a local vLLM server for the selected model or fallback model when GPU/runtime support is available.
-- [ ] Call the selected inference backend from the inference script.
-- [ ] Run the fine-tuned model on validation examples.
-- [ ] Check JSON parse rate.
-- [ ] Check sample explanations and rewritten resumes for hallucinations.
-- [ ] Run the fine-tuned model on the full test set.
-- [ ] Save all generated test outputs with model version, adapter version, prompt version, serving backend, and backend configuration.
+- [X] Run a Transformers/PEFT smoke test against the saved LoRA adapter in Colab.
+- [X] Start a local vLLM server for the selected model or fallback model when GPU/runtime support is available.
+- [X] Call the selected inference backend from the inference script.
+- [X] Run the fine-tuned model on validation examples.
+- [X] Check JSON parse rate.
+- [X] Check sample explanations and rewritten resumes for hallucinations.
+- [X] Run the fine-tuned model on the full test set.
+- [X] Save all generated test outputs with model version, adapter version, prompt version, serving backend, and backend configuration.
 
 **Definition of done:** The fine-tuned model has produced test-set outputs through vLLM or the documented Transformers/PEFT fallback path, and those outputs can be evaluated against all baselines.
 

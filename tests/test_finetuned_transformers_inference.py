@@ -40,6 +40,11 @@ class FakeTokenizer:
         return '{"score": 82, "explanation": {}, "resume_suggestions": []}'
 
 
+class FakeTokenizerWithoutChatTemplate(FakeTokenizer):
+    def apply_chat_template(self, messages, tokenize, add_generation_prompt):
+        raise ValueError("tokenizer.chat_template is not set")
+
+
 class FakeModel:
     device = "cpu"
 
@@ -66,6 +71,20 @@ def test_render_chat_prompt_uses_tokenizer_chat_template():
         "tokenize": False,
         "add_generation_prompt": True,
     }
+
+
+def test_render_chat_prompt_falls_back_when_chat_template_is_missing():
+    tokenizer = FakeTokenizerWithoutChatTemplate()
+    messages = [
+        {"role": "system", "content": "Return JSON only."},
+        {"role": "user", "content": "Resume text."},
+    ]
+
+    prompt = render_chat_prompt(tokenizer, messages)
+
+    assert "SYSTEM:\nReturn JSON only." in prompt
+    assert "USER:\nResume text." in prompt
+    assert prompt.endswith("ASSISTANT:\n")
 
 
 def test_call_transformers_chat_decodes_only_new_tokens():

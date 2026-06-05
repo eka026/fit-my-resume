@@ -22,13 +22,17 @@ SERVING_BACKEND = "transformers_peft"
 def render_chat_prompt(tokenizer: Any, messages: list[dict[str, str]]) -> str:
     apply_chat_template = getattr(tokenizer, "apply_chat_template", None)
     if callable(apply_chat_template):
-        return str(
-            apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True,
+        try:
+            return str(
+                apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                )
             )
-        )
+        except ValueError as error:
+            if "chat_template" not in str(error):
+                raise
 
     rendered_messages = []
     for message in messages:

@@ -1,0 +1,10 @@
+{
+  "rows": 5,
+  "parse_success": 5,
+  "parse_failed": 0,
+  "parse_rate": 100.0,
+  "score_count": 5,
+  "score_min": 10.0,
+  "score_max": 35.0,
+  "score_mean": 19.0
+}
