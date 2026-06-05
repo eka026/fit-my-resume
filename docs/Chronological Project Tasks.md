@@ -66,39 +66,39 @@ Original proposal window: Week 1, now to May 10.
 
 Original proposal window: Week 2, May 11 to May 17.
 
-- [ ] Generate teacher outputs for a small pilot batch first.
+- [X] Generate teacher outputs for a small pilot batch first.
   - [X] Created and ran a dry-run pilot artifact: `results/teacher_pilot/deepseek_teacher_pilot_dry_run.jsonl`.
-  - [ ] Run the real DeepSeek pilot after `DEEPSEEK_API_KEY` is available.
-- [ ] Validate that each teacher output contains valid JSON.
+  - [X] Run the real DeepSeek pilot after `DEEPSEEK_API_KEY` is available.
+- [X] Validate that each teacher output contains valid JSON.
   - [X] Added pilot-output JSON parsing in `src/run_teacher_pilot.py`.
   - [X] Verified the pilot validation tests pass with pytest plugin autoload disabled.
-- [ ] Check that each output includes all required fields:
+- [X] Check that each output includes all required fields:
   - `score`.
   - `explanation`.
   - `resume_suggestions`.
   - [X] Added schema validation for required top-level fields in `src/run_teacher_pilot.py`.
   - [X] Added tests covering valid schema acceptance and invalid score rejection.
-- [ ] Manually spot-check the pilot outputs for quality.
-- [ ] Reject or revise outputs that:
+- [X] Manually spot-check the pilot outputs for quality.
+- [X] Reject or revise outputs that:
   - Invent experience not present in the original resume.
   - Give scores inconsistent with the resume-job pair.
   - Produce vague explanations with no job-specific evidence.
   - Fail JSON parsing.
   - Rewrite the resume too aggressively.
-- [ ] Revise the teacher prompt if the pilot batch has recurring problems.
-- [ ] Add a small human validation step for teacher outputs:
+- [X] Revise the teacher prompt if the pilot batch has recurring problems.
+- [X] Add a small human validation step for teacher outputs:
   - Select a random sample of teacher-generated examples.
   - Have team members check factuality and usefulness.
   - Record the number of hallucinated, vague, or malformed outputs.
-- [ ] Generate teacher outputs for the full training and validation sets after the pilot passes.
-- [ ] Save teacher outputs with source IDs and prompt version.
-- [ ] Convert the dataset into instruction-tuning format:
+- [X] Generate teacher outputs for the full training and validation sets after the pilot passes.
+- [X] Save teacher outputs with source IDs and prompt version.
+- [X] Convert the dataset into instruction-tuning format:
   - Instruction: task definition and output constraints.
   - Input: resume plus job description.
   - Output: teacher-generated JSON.
-- [ ] Build a JSON validation script for the instruction-tuning corpus.
-- [ ] Run validation on the full generated corpus.
-- [ ] Remove or repair malformed examples before training.
+- [X] Build a JSON validation script for the instruction-tuning corpus.
+- [X] Run validation on the full generated corpus.
+- [X] Remove or repair malformed examples before training.
 
 **Definition of done:** The instruction-tuning dataset is valid, traceable, quality-checked, and ready for baseline and training work.
 
@@ -108,13 +108,13 @@ Original proposal window: Week 2, May 11 to May 17.
 
 Complete before judging whether fine-tuning helped.
 
-- [ ] Implement BM25 keyword-matching baseline for score prediction.
-- [ ] Run BM25 on the validation and test sets.
-- [ ] Save BM25 scores and metrics.
-- [ ] Implement sentence-transformer cosine-similarity baseline using `all-mpnet-base-v2`.
-- [ ] Run sentence-transformer baseline on the validation and test sets.
-- [ ] Save sentence-transformer scores and metrics.
-- [ ] Implement zero-shot Llama 3.1 8B prompting using the same JSON schema.
+- [X] Implement BM25 keyword-matching baseline for score prediction.
+- [X] Run BM25 on the validation and test sets.
+- [X] Save BM25 scores and metrics.
+- [X] Implement sentence-transformer cosine-similarity baseline using `all-mpnet-base-v2`.
+- [X] Run sentence-transformer baseline on the validation and test sets.
+- [X] Save sentence-transformer scores and metrics.
+- [X] Implement zero-shot Llama 3.1 8B prompting using the same JSON schema.
 - [ ] Serve the zero-shot Llama model with vLLM if the available GPU/runtime supports it.
 - [ ] Run zero-shot Llama on a small sample first to verify formatting.
 - [ ] Run zero-shot Llama on the test set if compute permits.

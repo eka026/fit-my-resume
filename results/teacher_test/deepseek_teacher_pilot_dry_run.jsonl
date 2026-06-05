@@ -1,0 +1,1 @@
+{"pair_id": "test_29483501_job_000234_strong_hybrid", "resume_id": "29483501", "job_id": "job_000234", "pairing_strategy": "strong_hybrid", "similarity_score": 0.230726, "prompt_version": "teacher_gold_output_prompt_v3", "model": "deepseek-v4-flash", "created_at": "2026-06-05T09:49:58.528694+00:00", "rendered_prompt_chars": 17550}
