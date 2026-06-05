@@ -3,9 +3,9 @@
 **Goal:** Complete the FitMyResume CS455 project: an end-to-end resume-job matching system that scores fit, explains matches/gaps, and rewrites resumes without fabricating experience.
 
 **Core deliverables by the end of the project:**
-- Fine-tuned Llama 3.1 8B model using QLoRA/LoRA adapters, or a documented smaller-model fallback if compute prevents 8B training.
+- Fine-tuned Qwen2.5-7B-Instruct model using QLoRA/LoRA adapters, or a documented smaller-model fallback if compute prevents 7B training.
 - vLLM-backed inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `resume_suggestions`.
-- Baseline comparison against BM25, sentence-transformer similarity, and zero-shot Llama 3.1 8B.
+- Baseline comparison against BM25, sentence-transformer similarity, and zero-shot Qwen2.5-7B-Instruct.
 - Automatic evaluation results plus a small manual evaluation component for rewritten resumes.
 - Error analysis, final report, cleaned repository, and short demo notebook or Gradio interface.
 
@@ -32,7 +32,7 @@ Original proposal window: Week 1, now to May 10.
 - [X] Set up Colab Pro, Colab free, and Kaggle Notebook environments.
 - [X] Verify access to required services:
   - Kaggle dataset download.
-  - Hugging Face model access for Llama 3.1 8B Instruct.
+  - Hugging Face model access for Qwen2.5-7B-Instruct.
   - Teacher LLM API access.
   - Judge LLM API access.
 - [X] Download the "Resume and Job Description" Kaggle dataset.
@@ -114,12 +114,12 @@ Complete before judging whether fine-tuning helped.
 - [X] Implement sentence-transformer cosine-similarity baseline using `all-mpnet-base-v2`.
 - [X] Run sentence-transformer baseline on the validation and test sets.
 - [X] Save sentence-transformer scores and metrics.
-- [X] Implement zero-shot Llama 3.1 8B prompting using the same JSON schema.
-- [ ] Serve the zero-shot Llama model with vLLM if the available GPU/runtime supports it.
-- [ ] Run zero-shot Llama on a small sample first to verify formatting.
-- [ ] Run zero-shot Llama on the test set if compute permits.
-- [ ] Track JSON parse rate for zero-shot outputs.
-- [ ] Save all baseline outputs in a consistent results format.
+- [X] Implement zero-shot Qwen2.5-7B-Instruct prompting using the same JSON schema.
+- [X] Serve the zero-shot Qwen model with vLLM if the available GPU/runtime supports it.
+- [X] Run zero-shot Qwen on a small sample first to verify formatting.
+- [x] Run zero-shot Qwen on the test set if compute permits.
+- [X] Track JSON parse rate for zero-shot outputs.
+- [X] Save all baseline outputs in a consistent results format.
 
 **Definition of done:** The project has baseline results for comparison before fine-tuned model results are interpreted.
 
@@ -129,31 +129,31 @@ Complete before judging whether fine-tuning helped.
 
 Original proposal window: Week 3, May 18 to May 24.
 
-- [ ] Create a small training smoke test using a tiny subset of the instruction-tuning data.
-- [ ] Load Llama 3.1 8B Instruct in 4-bit quantization with `bitsandbytes`.
-- [ ] Attach LoRA adapters with the initial planned configuration:
+- [X] Create a small training smoke test using a tiny subset of the instruction-tuning data.
+- [X] Load Qwen2.5-7B-Instruct in 4-bit quantization with `bitsandbytes`.
+- [X] Attach LoRA adapters with the initial planned configuration:
   - Rank: 16.
   - Target modules: attention projection layers such as `q_proj` and `v_proj`.
-- [ ] Configure Hugging Face TRL `SFTTrainer`.
-- [ ] Use a formatting function or collator that trains on the expected answer tokens, not unnecessary prompt reconstruction.
-- [ ] Set generation and training constraints:
+- [X] Configure Hugging Face TRL `SFTTrainer`.
+- [X] Use a formatting function or collator that trains on the expected answer tokens, not unnecessary prompt reconstruction.
+- [X] Set generation and training constraints:
   - Maximum sequence length.
   - Batch size and gradient accumulation.
   - Learning rate.
   - Epoch count.
   - Checkpoint frequency.
-- [ ] Run the smoke test and confirm:
+- [X] Run the smoke test and confirm:
   - Training starts without memory failure.
   - Loss decreases on the small sample.
   - Checkpoints are saved.
   - Inference produces parseable JSON on a few examples.
-- [ ] Prepare compute fallback settings:
+- [X] Prepare compute fallback settings:
   - Smaller batch size.
   - More gradient accumulation.
   - Shorter context length.
   - Fewer training examples for a first complete run.
   - More frequent adapter checkpointing.
-  - Llama 3.2 3B fallback if 8B cannot run reliably.
+  - Smaller Qwen-family fallback if Qwen2.5-7B cannot run reliably.
 
 **Definition of done:** The training script works on a small subset and the team knows the fallback path if full training hits compute limits.
 
@@ -217,8 +217,8 @@ Original proposal window: Week 4, May 25 to May 31.
 - [ ] Create summary tables comparing:
   - BM25.
   - Sentence-transformer.
-  - Zero-shot Llama.
-  - Fine-tuned Llama.
+  - Zero-shot Qwen.
+  - Fine-tuned Qwen.
 
 **Definition of done:** All automatic metrics are computed and summarized in tables ready for the final report.
 
@@ -291,7 +291,7 @@ Original proposal window: Week 5, June 1 to June 7.
   - LoRA rank comparison, such as 8 vs. 16 vs. 32.
   - Smaller training subset vs. full training set.
   - Different learning rate.
-  - Llama 3.2 3B fallback if 8B is unstable.
+  - Smaller Qwen-family fallback if Qwen2.5-7B is unstable.
 - [ ] Run only ablations that can finish and be evaluated reliably.
 - [ ] Keep the same validation/test split across experiments.
 - [ ] Compare ablation results against the main fine-tuned model.
@@ -379,7 +379,7 @@ If time becomes tight, complete these in order:
 1. Clean dataset and stable train/validation/test split.
 2. Teacher prompt and teacher-output quality checks.
 3. BM25 and sentence-transformer baselines.
-4. Zero-shot Llama baseline on a manageable sample or full test set.
+4. Zero-shot Qwen baseline on a manageable sample or full test set.
 5. QLoRA smoke test.
 6. Full fine-tuning or smaller-model fallback.
 7. vLLM-backed inference for the selected model, or documented fallback inference if vLLM is not feasible.
@@ -395,7 +395,7 @@ If compute or API limits become severe, the minimum defensible version is:
 - Cleaned dataset and documented preprocessing.
 - Teacher-generated instruction dataset with quality checks.
 - BM25 and sentence-transformer baseline results.
-- Zero-shot Llama results.
+- Zero-shot Qwen results.
 - One completed QLoRA run, even if on a smaller subset or smaller model.
 - vLLM inference for the selected model if compute allows, or a documented fallback inference method.
 - Automatic evaluation and small manual evaluation.

@@ -197,6 +197,23 @@ metadata
 
 The generated instruction-tuning files are derived artifacts and are not tracked
 by Git.
+
+## Fine-Tuned Qwen vLLM Inference
+
+Phase 5 inference uses the trained Qwen2.5-7B LoRA adapter behind a vLLM
+OpenAI-compatible server. See the Colab runbook for the A100 commands:
+
+```text
+docs/phase5_finetuned_qwen_vllm_runbook.md
+```
+
+The reusable scripts are:
+
+```text
+src/run_finetuned_vllm_inference.py
+src/summarize_finetuned_outputs.py
+```
+
 ## Project Plan
 
 See `docs/Chronological Project Tasks.md` for the chronological task list and project milestones.
