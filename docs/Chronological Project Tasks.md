@@ -4,7 +4,7 @@
 
 **Core deliverables by the end of the project:**
 - Fine-tuned Qwen2.5-7B-Instruct model using QLoRA/LoRA adapters, or a documented smaller-model fallback if compute prevents 7B training.
-- vLLM-backed inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `resume_suggestions`.
+- Fine-tuned inference pipeline that accepts a resume and job description and returns valid JSON with `score`, `explanation`, and `resume_suggestions`, using vLLM when the runtime supports it or a Transformers/PEFT fallback when Colab serving is unstable.
 - Baseline comparison against BM25, sentence-transformer similarity, and zero-shot Qwen2.5-7B-Instruct.
 - Automatic evaluation results plus a small manual evaluation component for rewritten resumes.
 - Error analysis, final report, cleaned repository, and short demo notebook or Gradio interface.
@@ -13,7 +13,7 @@
 - Add a small manual evaluation of rewritten resumes, not only LLM-as-judge.
 - Spot-check teacher-generated outputs thoroughly before using them for fine-tuning.
 - Prepare compute fallbacks and optimize training so Colab/Kaggle limits do not block the project.
-- Use vLLM for model serving and batch inference after training or for zero-shot inference; do not use vLLM for QLoRA training itself.
+- Use vLLM for high-throughput model serving when the runtime supports it; use direct Transformers/PEFT inference as the documented fallback path. Do not use vLLM for QLoRA training itself.
 
 ---
 
@@ -172,19 +172,22 @@ Run this after the training smoke test passes.
   - Runtime and interruption risk.
 - [ ] Stop early if validation loss worsens or outputs degrade.
 - [ ] Save the final LoRA adapter and configuration.
-- [ ] Decide the vLLM serving strategy for the trained model:
+- [ ] Decide the primary inference backend for the trained model:
   - Merge the LoRA adapter into the base model and serve the merged model with vLLM, or
-  - Serve the base model with LoRA adapter support if the selected vLLM version and runtime support it.
-- [ ] Write or finalize the vLLM-based inference script.
-- [ ] Start a local vLLM server for the selected model or fallback model.
-- [ ] Call the vLLM OpenAI-compatible API from the inference script.
+  - Serve the base model with LoRA adapter support if the selected vLLM version and runtime support it, or
+  - Load the base model plus LoRA adapter directly with Transformers/PEFT if Colab makes vLLM unreliable.
+- [X] Write or finalize the vLLM-based inference script.
+- [X] Write the Transformers/PEFT fallback inference script.
+- [ ] Run a Transformers/PEFT smoke test against the saved LoRA adapter in Colab.
+- [ ] Start a local vLLM server for the selected model or fallback model when GPU/runtime support is available.
+- [ ] Call the selected inference backend from the inference script.
 - [ ] Run the fine-tuned model on validation examples.
 - [ ] Check JSON parse rate.
 - [ ] Check sample explanations and rewritten resumes for hallucinations.
 - [ ] Run the fine-tuned model on the full test set.
-- [ ] Save all generated test outputs with model version, adapter version, prompt version, and vLLM serving configuration.
+- [ ] Save all generated test outputs with model version, adapter version, prompt version, serving backend, and backend configuration.
 
-**Definition of done:** The fine-tuned model has produced test-set outputs through the vLLM inference path and those outputs can be evaluated against all baselines.
+**Definition of done:** The fine-tuned model has produced test-set outputs through vLLM or the documented Transformers/PEFT fallback path, and those outputs can be evaluated against all baselines.
 
 ---
 
@@ -361,6 +364,7 @@ Complete this after experiments are frozen.
   - Data preparation instructions.
   - Training command.
   - vLLM serving command.
+  - Transformers/PEFT fallback inference command.
   - Evaluation command.
   - Demo command.
 - [ ] Remove secrets, API keys, and private files from the repository.
@@ -382,7 +386,7 @@ If time becomes tight, complete these in order:
 4. Zero-shot Qwen baseline on a manageable sample or full test set.
 5. QLoRA smoke test.
 6. Full fine-tuning or smaller-model fallback.
-7. vLLM-backed inference for the selected model, or documented fallback inference if vLLM is not feasible.
+7. Fine-tuned inference for the selected model through vLLM or the documented Transformers/PEFT fallback.
 8. Automatic evaluation.
 9. Small manual rewrite evaluation.
 10. Error analysis.
@@ -397,7 +401,7 @@ If compute or API limits become severe, the minimum defensible version is:
 - BM25 and sentence-transformer baseline results.
 - Zero-shot Qwen results.
 - One completed QLoRA run, even if on a smaller subset or smaller model.
-- vLLM inference for the selected model if compute allows, or a documented fallback inference method.
+- Fine-tuned inference for the selected model using vLLM if compute allows, or the documented Transformers/PEFT fallback if Colab serving is unstable.
 - Automatic evaluation and small manual evaluation.
 - Honest error analysis explaining limitations and compute constraints.
 - Simple demo notebook using the best available model output.
