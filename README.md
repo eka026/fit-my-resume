@@ -219,6 +219,48 @@ src/run_finetuned_transformers_inference.py
 src/summarize_finetuned_outputs.py
 ```
 
+## Manual Evaluation
+
+Phase 7 prepares a small human-review packet for generated resume suggestions.
+Because full fine-tuned test-set outputs are not currently available in the
+repository, the checked-in packet uses the available 50-example validation
+sample and labels it accordingly.
+
+Build the reviewer form and Markdown packet:
+
+```powershell
+python src/build_manual_evaluation.py `
+  --instructions data/instruction_tuning/instruction_tuning_validation.jsonl `
+  --outputs results/finetuned_qwen_validation_transformers_sample50_outputs.jsonl `
+  --output-dir results/manual_evaluation `
+  --sample-size 10 `
+  --seed 42 `
+  --sample-label validation_sample_finetuned_qwen
+```
+
+This writes:
+
+```text
+results/manual_evaluation/manual_evaluation_form.csv
+results/manual_evaluation/manual_evaluation_packet.md
+```
+
+After at least one team member fills the rating columns in
+`manual_evaluation_form.csv`, summarize the manual results:
+
+```powershell
+python src/summarize_manual_evaluation.py `
+  --form results/manual_evaluation/manual_evaluation_form.csv `
+  --output-dir results/manual_evaluation
+```
+
+This writes:
+
+```text
+results/manual_evaluation/manual_evaluation_summary_template.csv
+results/manual_evaluation/phase7_manual_evaluation_summary.md
+```
+
 ## Project Plan
 
 See `docs/Chronological Project Tasks.md` for the chronological task list and project milestones.

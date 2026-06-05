@@ -238,13 +238,17 @@ CS455 status: sufficient for final report, with the limitation that the fine-tun
 
 This phase is added because of the instructor's suggestion.
 
-- [ ] Select a small manual evaluation sample from the test set.
-- [ ] Include examples from different job categories when possible.
-- [ ] Prepare a lightweight human evaluation form.
-- [ ] For each sampled example, show evaluators:
+- [X] Select a small manual evaluation sample.
+  - [X] Created a 10-example validation sample from `results/finetuned_qwen_validation_transformers_sample50_outputs.jsonl` because full fine-tuned test-set outputs are not currently available.
+- [X] Include examples from different job categories when possible.
+  - [X] Balanced the sample across available `pairing_strategy` values when possible.
+- [X] Prepare a lightweight human evaluation form.
+  - [X] Wrote `results/manual_evaluation/manual_evaluation_form.csv`.
+- [X] For each sampled example, show evaluators:
   - Original resume.
   - Target job description.
   - Generated rewrite.
+  - [X] Wrote `results/manual_evaluation/manual_evaluation_packet.md`.
 - [ ] Ask evaluators to score each rewrite from 1 to 5 on:
   - Relevance to the job.
   - Faithfulness to the original resume.
@@ -252,14 +256,17 @@ This phase is added because of the instructor's suggestion.
   - Overall preference.
 - [ ] Ask evaluators to mark whether the rewrite includes fabricated content.
 - [ ] Have at least two team members evaluate the same sample if time allows.
+- [X] Add a reusable script to summarize manual results after ratings are entered:
+  - [X] `src/summarize_manual_evaluation.py`.
 - [ ] Summarize manual results:
   - Average score per criterion.
   - Number of fabrication flags.
   - Common qualitative issues.
+  - [ ] Current summary artifact exists at `results/manual_evaluation/phase7_manual_evaluation_summary.md`, but it correctly reports zero rated rows until team members fill the form.
 - [ ] Compare manual results with LLM-as-judge results.
 - [ ] Note agreements and disagreements between human and automatic evaluation.
 
-**Definition of done:** The final report includes a small human evaluation section that complements the automatic judge.
+**Definition of done:** The final report includes a small human evaluation section that complements the automatic judge. Current Phase 7 status: artifacts are prepared, but human ratings still need to be entered before final manual-evaluation conclusions can be claimed.
 
 ---
 
