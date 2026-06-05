@@ -163,16 +163,16 @@ Original proposal window: Week 3, May 18 to May 24.
 
 Run this after the training smoke test passes.
 
-- [ ] Start full QLoRA fine-tuning on the prepared training set.
-- [ ] Save checkpoints frequently to persistent storage.
-- [ ] Monitor:
+- [X] Start full QLoRA fine-tuning on the prepared training set.
+- [X] Save checkpoints frequently to persistent storage.
+- [X] Monitor:
   - Training loss.
   - Validation loss.
   - GPU memory usage.
   - Runtime and interruption risk.
-- [ ] Stop early if validation loss worsens or outputs degrade.
-- [ ] Save the final LoRA adapter and configuration.
-- [ ] Decide the primary inference backend for the trained model:
+- [X] Stop early if validation loss worsens or outputs degrade.
+- [X] Save the final LoRA adapter and configuration.
+- [X] Decide the primary inference backend for the trained model:
   - Merge the LoRA adapter into the base model and serve the merged model with vLLM, or
   - Serve the base model with LoRA adapter support if the selected vLLM version and runtime support it, or
   - Load the base model plus LoRA adapter directly with Transformers/PEFT if Colab makes vLLM unreliable.
@@ -195,35 +195,42 @@ Run this after the training smoke test passes.
 
 Original proposal window: Week 4, May 25 to May 31.
 
-- [ ] Evaluate fit-score quality:
-  - Pearson correlation against match labels.
-  - Spearman correlation against match labels.
-  - Accuracy if labels are binarized.
-  - Macro F1 if labels are binarized.
-- [ ] Evaluate explanation similarity:
-  - ROUGE-L against teacher references.
-  - BERTScore against teacher references.
-- [ ] Build the LLM-as-judge rubric for explanations.
-- [ ] Run judge evaluation with a model different from the teacher model.
+CS455 status: sufficient for final report, with the limitation that the fine-tuned model was evaluated on a 50-example validation sample due to compute/runtime constraints. Do not claim full-dataset superiority for the fine-tuned model unless more fine-tuned outputs are generated later.
+
+- [X] Evaluate fit-score quality:
+  - [X] Pearson correlation against match labels.
+  - [X] Spearman correlation against match labels.
+  - [X] Accuracy if labels are binarized.
+  - [X] Macro F1 if labels are binarized.
+- [X] Evaluate explanation similarity:
+  - [X] ROUGE-L against teacher references.
+  - [ ] BERTScore against teacher references. Optional/deferred because it requires heavier model dependencies and is not necessary for the CS455 minimum.
+- [X] Build the LLM-as-judge rubric for explanations.
+- [ ] Run judge evaluation with a model different from the teacher model. Optional if time/API budget permits; otherwise discuss as future work.
 - [ ] Score explanations on:
   - Correctness.
   - Specificity.
   - Coverage of matched qualifications.
   - Coverage of missing qualifications.
-- [ ] Build pairwise judge prompts for rewritten resumes.
-- [ ] Run pairwise comparison between:
-  - Original resume and rewritten resume.
-  - Zero-shot rewrite and fine-tuned rewrite.
+- [X] Build pairwise judge prompts for resume suggestions.
+- [ ] Run pairwise comparison between resume suggestion sets. Optional if time/API budget permits; resume suggestions replace full rewritten resumes because full rewrites were token-heavy and costly.
+  - Teacher resume suggestions and candidate resume suggestions.
+  - Zero-shot resume suggestions and fine-tuned resume suggestions.
 - [ ] Run bidirectional pairwise comparisons to reduce position bias.
-- [ ] Ask the judge to flag fabricated content in each rewrite.
+- [ ] Ask the judge to flag fabricated content in each suggestion set.
 - [ ] Save raw judge outputs and parsed metrics.
-- [ ] Create summary tables comparing:
-  - BM25.
-  - Sentence-transformer.
-  - Zero-shot Qwen.
-  - Fine-tuned Qwen.
+- [X] Create summary tables comparing:
+  - [X] BM25.
+  - [ ] Sentence-transformer. Optional/deferred unless it can be regenerated quickly in Colab/Kaggle with `sentence-transformers/all-mpnet-base-v2`.
+  - [X] Zero-shot Qwen.
+  - [X] Fine-tuned Qwen.
+- [X] Save Phase 6 metric artifacts:
+  - `results/bm25_validation_outputs.jsonl`.
+  - `results/evaluation/score_and_explanation_metrics.csv`.
+  - `results/evaluation/parse_metrics.csv`.
+  - `results/evaluation/phase6_summary.md`.
 
-**Definition of done:** All automatic metrics are computed and summarized in tables ready for the final report.
+**Definition of done:** CS455 automatic evaluation is complete when deterministic score metrics, parse rates, ROUGE-L explanation similarity, and summary tables are saved and discussed honestly in the final report. BERTScore, sentence-transformer regeneration, and LLM-as-judge runs are optional extensions if time, dependencies, and API budget allow.
 
 ---
 
@@ -285,27 +292,7 @@ Run after automatic and manual evaluation produce initial results.
 
 ---
 
-## Phase 9 - Ablations and Compute Fallback Experiments
-
-Original proposal window: Week 5, June 1 to June 7.
-
-- [ ] Decide which ablations are realistic within the remaining time.
-- [ ] Prioritize the most informative experiments:
-  - LoRA rank comparison, such as 8 vs. 16 vs. 32.
-  - Smaller training subset vs. full training set.
-  - Different learning rate.
-  - Smaller Qwen-family fallback if Qwen2.5-7B is unstable.
-- [ ] Run only ablations that can finish and be evaluated reliably.
-- [ ] Keep the same validation/test split across experiments.
-- [ ] Compare ablation results against the main fine-tuned model.
-- [ ] Record compute cost and runtime for each experiment.
-- [ ] Decide the final model checkpoint to present.
-
-**Definition of done:** The report can honestly state whether fine-tuning improved results and under which settings it was worth the cost.
-
----
-
-## Phase 10 - Demo and User Interface
+## Phase 9 - Demo and User Interface
 
 Build after the final model or fallback model is selected.
 
@@ -331,7 +318,7 @@ Build after the final model or fallback model is selected.
 
 ---
 
-## Phase 11 - Final Report, Repository Cleanup, and Submission
+## Phase 10 - Final Report, Repository Cleanup, and Submission
 
 Complete this after experiments are frozen.
 

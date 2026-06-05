@@ -1,0 +1,4 @@
+parse_rate,parse_success,rows,system
+100.0,726,726,bm25
+99.8623,725,726,zero_shot_qwen
+100.0,50,50,finetuned_qwen

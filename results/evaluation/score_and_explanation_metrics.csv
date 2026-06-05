@@ -1,0 +1,4 @@
+accuracy,explanation_evaluated_count,macro_f1,mae,pearson,rmse,rouge_l_f1,score_evaluated_count,spearman,system
+76.8595,0,48.6736,20.2836,11.4711,25.7651,,726,13.296,bm25
+82.069,726,67.1034,20.2372,56.294,24.0261,12.6682,725,59.0974,zero_shot_qwen
+90.0,50,69.475,6.16,82.7219,9.265,31.597,50,85.2074,finetuned_qwen
