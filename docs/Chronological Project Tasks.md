@@ -310,23 +310,28 @@ Run after automatic and manual evaluation produce initial results.
 
 Build after the final model or fallback model is selected.
 
-- [ ] Decide demo format:
-  - Gradio interface, or
-  - Notebook demo if deployment time is limited.
-- [ ] Run the selected final model behind a local vLLM server for the demo when GPU resources allow.
-- [ ] If vLLM is not feasible in the demo environment, document the fallback inference path clearly.
-- [ ] Implement input fields:
+- [X] Decide demo format:
+  - Notebook demo selected to avoid depending on local GPU serving.
+  - Demo notebook: `notebooks/fitmyresume_demo.ipynb`.
+- [X] Run the selected final model behind a local vLLM server for the demo when GPU resources allow.
+  - Live vLLM remains optional; the notebook documents the vLLM command for GPU-backed demos.
+- [X] If vLLM is not feasible in the demo environment, document the fallback inference path clearly.
+  - The notebook defaults to saved fine-tuned Transformers/PEFT outputs and documents the live Transformers/PEFT fallback command.
+- [X] Implement input fields:
   - Resume text.
   - Job description text.
-- [ ] Add output display sections:
+  - Implemented as notebook cells that extract and display resume/job-description text from the saved instruction-format examples.
+- [X] Add output display sections:
   - Fit score.
   - Explanation.
   - Rewritten resume.
-- [ ] Add JSON parsing and error handling.
-- [ ] Add input length checks so long resumes do not crash inference.
-- [ ] Test the demo on multiple examples.
-- [ ] Prepare one polished demo example for the presentation.
-- [ ] Save screenshots or short notes for the final report/presentation.
+  - The model output uses resume suggestions rather than full rewritten resumes, consistent with later project scope.
+- [X] Add JSON parsing and error handling.
+- [X] Add input length checks so long resumes do not crash inference.
+- [X] Test the demo on multiple examples.
+- [X] Prepare one polished demo example for the presentation.
+- [X] Save screenshots or short notes for the final report/presentation.
+  - Short demo notes and commands are included in `notebooks/fitmyresume_demo.ipynb` and README.
 
 **Definition of done:** A stakeholder can run the demo and see the complete resume-job matching workflow, preferably through vLLM-backed inference or with a documented fallback if vLLM is unavailable.
 

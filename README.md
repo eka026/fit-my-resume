@@ -219,6 +219,27 @@ src/run_finetuned_transformers_inference.py
 src/summarize_finetuned_outputs.py
 ```
 
+## Notebook Demo
+
+Phase 9 uses a notebook demo instead of a Gradio app so the presentation path is
+reliable even when local GPU serving is unavailable:
+
+```text
+notebooks/fitmyresume_demo.ipynb
+```
+
+The notebook defaults to the saved fine-tuned validation sample:
+
+```text
+results/finetuned_qwen_validation_transformers_sample50_outputs.jsonl
+```
+
+Open the notebook from the project checkout and run the cells top to bottom. It
+loads a parseable fine-tuned output, shows the original resume/job-description
+inputs, checks input lengths, and displays the fit score, explanation, and
+resume suggestions. Optional cells document the vLLM and Transformers/PEFT live
+inference commands for GPU-backed demos.
+
 ## Manual Evaluation
 
 Phase 7 prepares a small human-review packet for generated resume suggestions.
