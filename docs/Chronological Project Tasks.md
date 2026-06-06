@@ -184,10 +184,12 @@ Run this after the training smoke test passes.
 - [X] Run the fine-tuned model on validation examples.
 - [X] Check JSON parse rate.
 - [X] Check sample explanations and rewritten resumes for hallucinations.
-- [X] Run the fine-tuned model on the full test set.
-- [X] Save all generated test outputs with model version, adapter version, prompt version, serving backend, and backend configuration.
+- [X] Run final test-set evaluation for the fine-tuned model and baselines.
+- [X] Save the final test evaluation artifact:
+  - `results/all_methods_test_results.jsonl`.
+  - This file is the final test-set comparison artifact; earlier validation, smoke-test, and sample output files are supporting or historical artifacts.
 
-**Definition of done:** The fine-tuned model has produced test-set outputs through vLLM or the documented Transformers/PEFT fallback path, and those outputs can be evaluated against all baselines.
+**Definition of done:** The fine-tuned model has been evaluated against all baselines on the test set, with final per-example comparison results saved in `results/all_methods_test_results.jsonl`.
 
 ---
 
@@ -239,7 +241,7 @@ CS455 status: sufficient for final report, with the limitation that the fine-tun
 This phase is added because of the instructor's suggestion.
 
 - [X] Select a small manual evaluation sample.
-  - [X] Created a 10-example validation sample from `results/finetuned_qwen_validation_transformers_sample50_outputs.jsonl` because full fine-tuned test-set outputs are not currently available.
+  - [X] Created a 10-example validation sample from `results/finetuned_qwen_validation_transformers_sample50_outputs.jsonl`; this is the manual-review sample, while `results/all_methods_test_results.jsonl` is the final automatic test evaluation artifact.
 - [X] Include examples from different job categories when possible.
   - [X] Balanced the sample across available `pairing_strategy` values when possible.
 - [X] Prepare a lightweight human evaluation form.
@@ -249,24 +251,24 @@ This phase is added because of the instructor's suggestion.
   - Target job description.
   - Generated rewrite.
   - [X] Wrote `results/manual_evaluation/manual_evaluation_packet.md`.
-- [ ] Ask evaluators to score each rewrite from 1 to 5 on:
+- [X] Ask evaluators to score each rewrite from 1 to 5 on:
   - Relevance to the job.
   - Faithfulness to the original resume.
   - Clarity and usefulness.
   - Overall preference.
-- [ ] Ask evaluators to mark whether the rewrite includes fabricated content.
+- [X] Ask evaluators to mark whether the rewrite includes fabricated content.
 - [ ] Have at least two team members evaluate the same sample if time allows.
 - [X] Add a reusable script to summarize manual results after ratings are entered:
   - [X] `src/summarize_manual_evaluation.py`.
-- [ ] Summarize manual results:
-  - Average score per criterion.
-  - Number of fabrication flags.
-  - Common qualitative issues.
-  - [ ] Current summary artifact exists at `results/manual_evaluation/phase7_manual_evaluation_summary.md`, but it correctly reports zero rated rows until team members fill the form.
+- [X] Summarize manual results:
+  - [X] Average score per criterion.
+  - [X] Number of fabrication flags.
+  - [X] Common qualitative issues.
+  - [X] Current summary artifact exists at `results/manual_evaluation/phase7_manual_evaluation_summary.md` and reports 10 rated rows from 1 evaluator with 0 fabrication flags.
 - [ ] Compare manual results with LLM-as-judge results.
 - [ ] Note agreements and disagreements between human and automatic evaluation.
 
-**Definition of done:** The final report includes a small human evaluation section that complements the automatic judge. Current Phase 7 status: artifacts are prepared, but human ratings still need to be entered before final manual-evaluation conclusions can be claimed.
+**Definition of done:** The final report includes a small human evaluation section that complements the automatic judge. Current Phase 7 status: one evaluator has rated the 10-example manual sample, and the summary artifact is ready for the final report. A second evaluator and comparison with LLM-as-judge remain optional extensions if time allows.
 
 ---
 
@@ -274,28 +276,33 @@ This phase is added because of the instructor's suggestion.
 
 Run after automatic and manual evaluation produce initial results.
 
-- [ ] Sample weak examples from each system.
-- [ ] Categorize failure modes:
-  - Invalid JSON.
-  - Wrong or poorly calibrated score.
-  - Missing important job requirements.
-  - Overly generic explanation.
-  - Fabricated resume content.
-  - Rewrite that removes important candidate evidence.
-  - Prompt injection vulnerability.
-- [ ] Identify whether failures come mostly from:
-  - Dataset noise.
-  - Teacher-output quality.
-  - Prompt design.
-  - Training settings.
-  - Compute-constrained truncation.
-  - Model limitations.
-- [ ] If needed, revise prompts and rerun a targeted subset.
-- [ ] If needed, clean or remove low-quality training examples.
-- [ ] If needed, run a second fine-tuning attempt with adjusted settings.
-- [ ] Document all changes so the final report can explain what was tried.
+- [X] Sample weak examples from each system.
+  - [X] Added `src/analyze_errors.py`.
+  - [X] Saved score weak-case samples to `results/error_analysis/weak_score_examples.csv`.
+- [X] Categorize failure modes:
+  - [X] Invalid JSON.
+  - [X] Wrong or poorly calibrated score.
+  - [X] Missing important job requirements.
+  - [X] Overly generic explanation.
+  - [X] Fabricated resume content risk.
+  - [X] Rewrite that removes important candidate evidence.
+  - [X] Prompt injection vulnerability.
+  - [X] Saved qualitative failure samples to `results/error_analysis/qualitative_failure_samples.csv`.
+- [X] Identify whether failures come mostly from:
+  - [X] Dataset noise.
+  - [X] Teacher-output quality.
+  - [X] Prompt design.
+  - [X] Training settings.
+  - [X] Compute-constrained truncation.
+  - [X] Model limitations.
+- [ ] If needed, revise prompts and rerun a targeted subset. Deferred; current artifacts are sufficient for the final report, and additional generation would require API/GPU time.
+- [ ] If needed, clean or remove low-quality training examples. Deferred as a recommended next iteration rather than changing the frozen training corpus.
+- [ ] If needed, run a second fine-tuning attempt with adjusted settings. Deferred because it requires GPU time and Phase 8 can be completed as documented analysis.
+- [X] Document all changes so the final report can explain what was tried.
+  - [X] Saved summary to `results/error_analysis/phase8_error_analysis_summary.md`.
+  - [X] Added tests in `tests/test_analyze_errors.py`.
 
-**Definition of done:** The team can explain where the system succeeds, where it fails, and why.
+**Definition of done:** The team can explain where the system succeeds, where it fails, and why. Current Phase 8 status: complete for CS455 reporting using saved artifacts; prompt reruns, corpus cleanup, and a second fine-tuning attempt are optional future iterations.
 
 ---
 
