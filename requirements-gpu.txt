@@ -1,0 +1,9 @@
+# Optional GPU/model dependencies for Colab/Kaggle inference and evaluation.
+# Install these in a GPU runtime after installing requirements.txt.
+accelerate
+bitsandbytes
+peft
+sentence-transformers
+torch
+transformers
+vllm

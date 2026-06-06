@@ -50,6 +50,14 @@ def numeric(value: Any) -> float | None:
     return None
 
 
+def score_scale_for(rows: list[dict[str, Any]], system: str) -> float:
+    scores = [score for row in rows if (score := numeric(row.get(system))) is not None]
+    if not scores:
+        return 1.0
+    max_score = max(scores)
+    return max_score / 100 if max_score > 100 else 1.0
+
+
 def sample_weak_score_examples(
     rows: list[dict[str, Any]],
     systems: list[str],
@@ -57,6 +65,7 @@ def sample_weak_score_examples(
 ) -> list[dict[str, Any]]:
     samples: list[dict[str, Any]] = []
     for system in systems:
+        scale = score_scale_for(rows, system)
         system_errors: list[dict[str, Any]] = []
         for row in rows:
             teacher_score = numeric(row.get("teacher_score"))
@@ -64,14 +73,15 @@ def sample_weak_score_examples(
             pair_id = row.get("pair_id")
             if teacher_score is None or pred_score is None or not isinstance(pair_id, str):
                 continue
+            scaled_pred_score = pred_score / scale
             system_errors.append(
                 {
                     "system": system,
                     "pair_id": pair_id,
                     "strategy": str(row.get("strategy") or row.get("pairing_strategy") or ""),
                     "teacher_score": teacher_score,
-                    "pred_score": pred_score,
-                    "absolute_error": round(abs(pred_score - teacher_score), 4),
+                    "pred_score": round(scaled_pred_score, 4),
+                    "absolute_error": round(abs(scaled_pred_score - teacher_score), 4),
                 }
             )
         samples.extend(
@@ -232,7 +242,7 @@ def write_markdown(
         "",
         "## Scope",
         "",
-        "This analysis uses saved project artifacts rather than rerunning generation. Score weak cases come from `results/all_methods_test_results.jsonl`; qualitative failure labels come from saved validation outputs with parse status and generated JSON.",
+        "This analysis uses saved project artifacts rather than rerunning generation. Score weak cases come from `results/all_methods_test_results.jsonl`; raw system score columns above 100 are normalized to a 0-100 scale before error ranking. Qualitative failure labels come from saved validation outputs with parse status and generated JSON.",
         "",
         "## Weak Score Examples",
         "",

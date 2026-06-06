@@ -37,6 +37,26 @@ def test_sample_weak_score_examples_picks_largest_absolute_errors_per_system():
     ]
 
 
+def test_sample_weak_score_examples_normalizes_raw_bm25_scale_before_ranking():
+    rows = [
+        {"pair_id": "a", "teacher_score": 90, "bm25": 1000},
+        {"pair_id": "b", "teacher_score": 10, "bm25": 500},
+    ]
+
+    samples = sample_weak_score_examples(rows, ["bm25"], limit=1)
+
+    assert samples == [
+        {
+            "system": "bm25",
+            "pair_id": "b",
+            "strategy": "",
+            "teacher_score": 10.0,
+            "pred_score": 50.0,
+            "absolute_error": 40.0,
+        }
+    ]
+
+
 def test_categorize_model_output_flags_parse_and_quality_failures():
     invalid = categorize_model_output(
         {

@@ -10,12 +10,24 @@ data/
   interim/      Intermediate cleaned or merged files. Not committed to Git.
   processed/    Final train/validation/test files. Not committed to Git.
 docs/           Project planning and documentation.
-models/         Local model checkpoints or LoRA adapters. Not committed to Git.
+models/         LoRA adapter files; large adapter weights are tracked with Git LFS.
 notebooks/      Exploration, experiments, and demo notebooks.
 prompts/        Teacher, judge, and zero-shot prompts.
 results/        Metrics, plots, tables, and error-analysis outputs.
 src/            Reusable project scripts.
 ```
+
+The final Qwen LoRA adapter is included under `models/qwen25-7b-fitmyresume-lora-v2/final/`;
+large adapter weights are tracked with Git LFS.
+
+## Final Results Artifacts
+
+- Test-set score comparison: `results/all_methods_test_results.jsonl`
+- Automatic evaluation summary: `results/evaluation/phase6_summary.md`
+- Error analysis: `results/error_analysis/phase8_error_analysis_summary.md`
+- Manual evaluation: `results/manual_evaluation/phase7_manual_evaluation_summary.md`
+- Demo notebook: `notebooks/fitmyresume_demo.ipynb`
+- Final all-methods test notebook: `notebooks/evaluate_all_methods_test.ipynb`
 
 ## Setup
 
@@ -27,7 +39,29 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-The current `requirements.txt` includes the Kaggle CLI used for downloading the dataset.
+The default `requirements.txt` is the lightweight local/test environment. It is
+enough for preprocessing, BM25, saved-artifact evaluation, manual-evaluation
+summaries, and the unit tests.
+
+GPU-backed model inference and sentence-transformer regeneration need the
+optional model stack:
+
+```powershell
+python -m pip install -r requirements-gpu.txt
+```
+
+Install `requirements-gpu.txt` in Colab/Kaggle or another compatible GPU
+runtime. `vllm` is mainly for Linux GPU serving; on Windows or unstable Colab
+sessions, use the Transformers/PEFT fallback script instead.
+
+## Run Tests
+
+The local test suite is designed for the lightweight dependency set:
+
+```powershell
+$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'
+python -m pytest
+```
 
 ## Kaggle Credentials
 

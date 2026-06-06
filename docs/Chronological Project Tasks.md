@@ -341,42 +341,49 @@ Build after the final model or fallback model is selected.
 
 Complete this after experiments are frozen.
 
-- [ ] Freeze final results.
-- [ ] Create final result tables:
-  - Score metrics.
-  - Explanation metrics.
-  - Rewrite judge results.
-  - Manual evaluation results.
-  - Ablation results.
-- [ ] Create final figures if useful:
-  - Metric comparison chart.
-  - Ablation comparison chart.
-  - Error category distribution.
-- [ ] Write the final report sections:
-  - Problem and motivation.
-  - Dataset and preprocessing.
-  - Teacher-data generation.
-  - Baselines.
-  - Fine-tuning method.
-  - Evaluation setup.
-  - Results.
-  - Manual evaluation.
-  - Error analysis.
-  - Limitations.
-  - Compute constraints and fallbacks.
-  - Conclusion.
-- [ ] Document repository usage:
-  - Installation/setup instructions.
-  - Data preparation instructions.
-  - Training command.
-  - vLLM serving command.
-  - Transformers/PEFT fallback inference command.
-  - Evaluation command.
-  - Demo command.
-- [ ] Remove secrets, API keys, and private files from the repository.
-- [ ] Confirm notebooks run from top to bottom or clearly document required runtime assumptions.
-- [ ] Prepare presentation/demo materials.
+- [X] Freeze final results.
+  - [X] Frozen artifacts are listed in `docs/submission_checklist.md`.
+- [X] Create final result tables:
+  - [X] Score metrics.
+  - [X] Explanation metrics.
+  - [ ] Rewrite judge results. Deferred; judge prompts exist, but full judge runs were not completed because of time/API-budget limits.
+  - [X] Manual evaluation results.
+  - [ ] Ablation results. Deferred; no separate ablation run was completed.
+- [X] Create final figures if useful:
+  - [ ] Metric comparison chart. Not required; final report uses compact tables.
+  - [ ] Ablation comparison chart. Not applicable because ablation runs were deferred.
+  - [X] Error category distribution. Included as a table in `results/error_analysis/phase8_error_analysis_summary.md`.
+- [X] Write the final report sections:
+  - [X] Problem and motivation.
+  - [X] Dataset and preprocessing.
+  - [X] Teacher-data generation.
+  - [X] Baselines.
+  - [X] Fine-tuning method.
+  - [X] Evaluation setup.
+  - [X] Results.
+  - [X] Manual evaluation.
+  - [X] Error analysis.
+  - [X] Limitations.
+  - [X] Compute constraints and fallbacks.
+  - [X] Conclusion.
+  - [X] Final report saved to `docs/final_report.md`.
+- [X] Document repository usage:
+  - [X] Installation/setup instructions.
+  - [X] Data preparation instructions.
+  - [X] Training command.
+  - [X] vLLM serving command.
+  - [X] Transformers/PEFT fallback inference command.
+  - [X] Evaluation command.
+  - [X] Demo command.
+  - [X] Added `docs/submission_checklist.md`.
+- [X] Remove secrets, API keys, and private files from the repository.
+  - [X] `.env`, data files, caches, and most model artifacts are covered by `.gitignore`. Git status could not be checked until the workspace is marked as a safe Git directory for the sandbox user.
+- [X] Confirm notebooks run from top to bottom or clearly document required runtime assumptions.
+  - [X] Demo notebook runtime assumptions are documented in README and `docs/final_report.md`.
+- [X] Prepare presentation/demo materials.
+  - [X] Demo notebook is ready at `notebooks/fitmyresume_demo.ipynb`.
 - [ ] Submit final report and repository link.
+  - [ ] Manual action for the team after reviewing the final report and repository link.
 
 **Definition of done:** The project is reproducible enough for grading, the report explains the evidence clearly, and the demo shows the end-to-end system.
 
